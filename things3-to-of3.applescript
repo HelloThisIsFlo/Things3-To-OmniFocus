@@ -22,45 +22,46 @@
 --
 property noProjectTitle : "No Project In Things"
 
-set answer to the button returned of ¬
-	(display alert ¬
-		¬
-			"Things 3 to Omnifocus 3 Importer" & return & return & "PLEASE READ BEFORE PROCEEDING" message ¬
-		"The script does not yet import sub-tasks or recurrences.
->> 'Some Day' tasks that are assigned to a project will not be imported. <<
-Omnifocus does not support tag short cuts, cancellation dates or contact info for a task,
-and does not permit the importation of modification date.
+-- set answer to the button returned of ¬
+-- 	(display alert ¬
+-- 		¬
+-- 			"Things 3 to Omnifocus 3 Importer" & return & return & "PLEASE READ BEFORE PROCEEDING" message ¬
+-- 		"The script does not yet import sub-tasks or recurrences.
+-- >> 'Some Day' tasks that are assigned to a project will not be imported. <<
+-- Omnifocus does not support tag short cuts, cancellation dates or contact info for a task,
+-- and does not permit the importation of modification date.
 
-1. TAKE BACKUPS!
-2. Empty your trash on Things 3.
-3. Reset your database on OmniFocus 3 & delete default tags.
-4. Run Clean Up when done on OmniFocus to remove logged tasks.
-5. Setup sync after import has completed.
+-- 1. TAKE BACKUPS!
+-- 2. Empty your trash on Things 3.
+-- 3. Reset your database on OmniFocus 3 & delete default tags.
+-- 4. Run Clean Up when done on OmniFocus to remove logged tasks.
+-- 5. Setup sync after import has completed.
 
-Then press 'I Understand' to get going.
-Importation will take a while, about 3,000 tasks per hour.
-" buttons {"How do I reset Omnifocus?", "I Understand", "    Cancel    "} default button 3)
-if answer is "    Cancel    " then return
-if answer is "How do I reset Omnifocus?" then
-	display dialog "Make sure you take backups of your Omnifocus database if you've used it before. Resetting will delete even the backups unless they are copied elsewhere!" with icon stop
-	open location "https://support.omnigroup.com/omnifocus-reset-database/"
-	return
-end if
-tell application "Things3"
-	--
-	-- Import T3 hierarchal tags into OF3 in correct order and without duplicates
-	--
-	-- Get tags from T3
+-- Then press 'I Understand' to get going.
+-- Importation will take a while, about 3,000 tasks per hour.
+-- " buttons {"How do I reset Omnifocus?", "I Understand", "    Cancel    "} default button 3)
+-- if answer is "    Cancel    " then return
+-- if answer is "How do I reset Omnifocus?" then
+-- 	display dialog "Make sure you take backups of your Omnifocus database if you've used it before. Resetting will delete even the backups unless they are copied elsewhere!" with icon stop
+-- 	open location "https://support.omnigroup.com/omnifocus-reset-database/"
+-- 	return
+-- end if
+
+on getTagsFromT3()
 	set tagList to {}
-	repeat with aTag in every tag
-		if (parent tag of aTag) is missing value then
-			copy {null, name of aTag as string} to end of tagList
-		else
-			copy {name of parent tag of aTag as string, name of aTag as string} to end of tagList
-		end if
-	end repeat
-	
-	-- Put tags into OF3
+	tell application "Things3"
+		repeat with aTag in every tag
+			if (parent tag of aTag) is missing value then
+				copy {null, name of aTag as string} to end of tagList
+			else
+				copy {name of parent tag of aTag as string, name of aTag as string} to end of tagList
+			end if
+		end repeat
+	end tell
+	return tagList
+end getTagsFromT3
+
+on createTagsInOF(tagList)
 	tell application "OmniFocus"
 		tell default document
 			-- we do this twice, once with first level and then again with second level
@@ -91,11 +92,17 @@ tell application "Things3"
 				end if
 			end repeat
 
-			-- Create Tag: 'DROPPED' to show that a task was 'cancelled' in Things 3
-			--  => Will need to manually set it to 'dropped' in OmniFocus
-			set droppedTag to make new tag with properties {name:"DROPPED"}
 		end tell
 	end tell -- End of Tag Import
+end createTagsInOF
+
+tell application "Things3"
+	--
+	-- Import T3 hierarchal tags into OF3 in correct order and without duplicates
+	--
+
+	set tagList to my getTagsFromT3()
+	my createTagsInOF(tagList)
 	
 	--	
 	-- Import T3 Areas as Folders into OF3
@@ -157,6 +164,9 @@ tell application "Things3"
 				set theDueDate to seventh item in aProject
 				set theDeferDate to eighth item in aProject
 
+				log "P | " & theProjectName
+
+
 				
 				if theProjectStatus is "completed" then
 					set theProjectStatus to done
@@ -167,7 +177,8 @@ tell application "Things3"
 				end if
 				
 				if theFolderName is missing value then
-					-- no area
+
+					-- Project OUTSIDE an area
 					if (project theProjectName exists) then
 						set theProject to project theProjectName
 					else
@@ -180,7 +191,8 @@ tell application "Things3"
 						end if
 					end if
 				else
-					-- Project inside an area
+
+					-- Project INSIDE an area
 					tell folder theFolderName
 						if project theProjectName exists then
 							set theProject to project theProjectName
@@ -194,9 +206,9 @@ tell application "Things3"
 								copy {theProject, theProjectCompletionDate} to end of completedProjectList
 							end if
 						end if
-						
 					end tell
 					move theProject to (end of sections of (first folder whose name is theFolderName))
+
 				end if
 				
 				-- Write out tags
@@ -212,7 +224,18 @@ tell application "Things3"
 	
 	-- Combine all the folders you want to search here
 	-- Options are: Inbox, Today, Anytime, Upcoming, Someday, Lonely Projects, Logbook, Trash
-	set theTodos to to dos of list "Inbox"  & to dos of list "Anytime" & to dos of list "Upcoming"
+
+	set theTodos to {}
+	repeat with aProject in every project
+		set projectTodos to to dos in aProject
+		repeat with projectTodo in projectTodos
+			copy projectTodo to end of theTodos
+		end repeat
+	end repeat
+	log theTodos
+	log to dos of list "Anytime"
+	
+	-- set theTodos to to dos of list "Inbox"  & to dos of list "Anytime" & to dos of list "Upcoming"
 
 
 	-- set theTodos to to dos of list "Logbook"
@@ -229,6 +252,7 @@ tell application "Things3"
 		set theStatus to status of aTodo as string
 		set theCompletionDate to completion date of aTodo
 		set theCreationDate to creation date of aTodo
+		log  (get properties of aTodo) 
 		
 		-- Get project & area names
 		set theFolderName to missing value
@@ -293,9 +317,8 @@ tell application "Things3"
 						set completion date of newTask to theCompletionDate
 					else if theStatus is "canceled" then
 						mark complete newTask
-						-- set status of newTask to dropped
-						-- Fix for dropped tasks
-						add droppedTag to (tags of newTask)
+						log "DROPPED TASK (shouldn't happen)"
+						exit
 						set completion date of newTask to theCompletionDate
 					else if theStatus is "open" then
 						mark incomplete newTask
@@ -321,6 +344,7 @@ tell application "Things3"
 			end repeat
 		end tell
 	end tell
+	log "Success"
 end tell -- Things application
 
 -- Clumsy way of seeing if an item is in the Inbox as Things doesn't expose a "list" property
@@ -364,6 +388,7 @@ on writeTagsTo(aTask, tagList)
 	tell application "OmniFocus"
 		tell default document
 			repeat with aTag in tagList
+				log tagList
 				
 				set theParentTag to first item of aTag
 				set theChildTag to second item of aTag

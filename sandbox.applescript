@@ -13,6 +13,61 @@ on listAllLists()
     end tell
 end listAllLists
 
+-- # Someday
+-- class:selected to do,
+-- status:open,
+-- tag names:,
+-- cancellation date:missing value,
+-- due date:missing value,
+-- modification date:date Friday,
+-- 14 April 2023 at 10:38:24,
+-- contact:missing value,
+-- project:project id Km4EJiWToPe5pu2EkrPp5x,
+-- area:missing value,
+-- notes:,
+-- activation date:missing value,
+-- id:HU7MeeWyYSKFetsyxCDTCC,
+-- completion date:missing value,
+-- name:Someday Task in Project In The Area,
+-- creation date:date Friday, 14 April 2023 at 10:38:24
+
+-- # Defered
+-- class:selected to do,
+-- status:open,
+-- tag names:,
+-- cancellation date:missing value,
+-- due date:missing value,
+-- modification date:date Friday,
+-- 14 April 2023 at 10:38:24,
+-- contact:missing value,
+-- project:project id Km4EJiWToPe5pu2EkrPp5x,
+-- area:missing value,
+-- notes:,
+-- activation date:date Monday,
+-- 1 January 2024 at 00:00:00,
+-- id:HMbTknenqpRvoEtpJpnp2x,
+-- completion date:missing value,
+-- name:Defered Task in Project In The Area,
+-- creation date:date Friday, 14 April 2023 at 10:38:24
+
+-- # Anytime
+-- class:selected to do,
+-- status:open,
+-- tag names:,
+-- cancellation date:missing value,
+-- due date:missing value,
+-- modification date:date Friday,
+-- 14 April 2023 at 10:38:24,
+-- contact:missing value,
+-- project:project id Km4EJiWToPe5pu2EkrPp5x,
+-- area:missing value,
+-- notes:,
+-- activation date:missing value,
+-- id:HGgMoSx3jxDVJtWYjLHrbg,
+-- completion date:missing value,
+-- name:Task in Project In The Area,
+-- creation date:date Friday, 14 April 2023 at 10:38:24
+
 on checkList(theList)
     tell application "Things3"
         set theTasks to to dos of list theList
@@ -23,6 +78,7 @@ on checkList(theList)
                 set theProjectTasks to to dos of aTask
                 repeat with aProjectTask in theProjectTasks
                     log "- " & name of aProjectTask as string
+                    log (get properties of aProjectTask)
                 end repeat
             end if
         end repeat
