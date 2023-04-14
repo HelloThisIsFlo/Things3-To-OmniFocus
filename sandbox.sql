@@ -28,7 +28,7 @@ FROM TMTask
 WHERE type = 0;
 
 -- Get DEMO task uuid
--- * The current uuid is: Ajq99kAwrmF8n1UZGSV4Jt
+-- NOTE: Put the result in the parameters (pycharm/datagrip)
 SELECT uuid
 FROM TMTask task
 WHERE task.title LIKE '%EVERYTHING%'
@@ -38,7 +38,7 @@ WHERE task.title LIKE '%EVERYTHING%'
 -- Get checklist items of DEMO task
 SELECT title
 FROM TMChecklistItem
-WHERE task == 'Ajq99kAwrmF8n1UZGSV4Jt'
+WHERE task == ${demo_task_uuid}
 ORDER BY "index";
 
 
@@ -52,7 +52,7 @@ SELECT uuid,
        area,
        rt1_repeatingTemplate
 FROM TMTask
-WHERE uuid == 'Ajq99kAwrmF8n1UZGSV4Jt'
+WHERE uuid == ${demo_task_uuid};
 
 SELECT uuid,
        title,
@@ -63,7 +63,12 @@ SELECT uuid,
        heading,
        area,
        rt1_repeatingTemplate
+FROM TMTask;
+
+SELECT startDate, deadline
 FROM TMTask
+WHERE uuid == ${demo_task_uuid};
+
 SELECT task.title,
        project.title,
        task.start,
@@ -81,7 +86,7 @@ SELECT task.title,
        task.repeaterMigrationDate
 FROM TMTask task
          LEFT JOIN TMTask project ON task.project == project.uuid
-where task.type == 0;
+WHERE task.type == 0;
 
 --     WHERE task IN (SELECT demo_task_id.uuid FROM demo_task_id)
 
