@@ -2,17 +2,20 @@ START_YEAR = 16
 START_MONTH = 12
 START_DAY = 7
 
+
 def day(bin_date):
     return (((1 << START_MONTH) - 1) & bin_date) >> START_DAY
 
+
 def month(bin_date):
     return (((1 << START_YEAR) - 1) & bin_date) >> START_MONTH
+
 
 def year(bin_date):
     return bin_date >> START_YEAR
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     y = 2023
     m = 4
     d = 14
@@ -29,4 +32,4 @@ if __name__ == '__main__':
 
     print(day(integer_value))
     integer_value = 132598144
-    print(f'{day(integer_value)}-{month(integer_value)}-{year(integer_value)}')
+    print(f"{day(integer_value)}-{month(integer_value)}-{year(integer_value)}")
