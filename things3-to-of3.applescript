@@ -90,6 +90,10 @@ tell application "Things3"
 					end if
 				end if
 			end repeat
+
+			-- Create Tag: 'DROPPED' to show that a task was 'cancelled' in Things 3
+			--  => Will need to manually set it to 'dropped' in OmniFocus
+			set droppedTag to make new tag with properties {name:"DROPPED"}
 		end tell
 	end tell -- End of Tag Import
 	
@@ -113,7 +117,7 @@ tell application "Things3"
 	--
 	-- Import Projects into OF3
 	-- 
-	set projectList to {{missing value, noProjectTitle, "", "active", "", {}}}
+	set projectList to {{missing value, noProjectTitle, "", "active", "", {}, missing value, missing value}}
 	set completedProjectList to {}
 	set AppleScript's text item delimiters to ","
 	repeat with aProject in every project
@@ -132,9 +136,13 @@ tell application "Things3"
 		
 		-- status: active/‌on hold/‌done/‌dropped. vs open completed canceled
 		set projectStatus to status of aProject as string
+		set dueDate to due date of aProject
+		set deferDate to activation date of aProject
 		
-		copy {areaName, projectName, projectNotes, projectStatus, projectCompletionDate, tagList} to end of projectList
+		copy {areaName, projectName, projectNotes, projectStatus, projectCompletionDate, tagList, dueDate, deferDate} to end of projectList
 	end repeat
+
+	log "Finsihed processing " & (count of folderList) & " folders"
 	log "Processing " & (count of projectList) & " projects"
 	
 	tell application "OmniFocus"
@@ -144,8 +152,11 @@ tell application "Things3"
 				set theProjectName to second item in aProject
 				set theProjectNotes to third item in aProject
 				set theProjectStatus to fourth item in aProject
-				set theProjectTags to sixth item in aProject
 				set theProjectCompletionDate to fifth item in aProject
+				set theProjectTags to sixth item in aProject
+				set theDueDate to seventh item in aProject
+				set theDeferDate to eighth item in aProject
+
 				
 				if theProjectStatus is "completed" then
 					set theProjectStatus to done
@@ -160,7 +171,7 @@ tell application "Things3"
 					if (project theProjectName exists) then
 						set theProject to project theProjectName
 					else
-						set theProject to make new project with properties {name:theProjectName, note:theProjectNotes}
+						set theProject to make new project with properties {name:theProjectName, note:theProjectNotes, due date: thedueDate, defer date: theDeferDate}
 					end if
 					
 					if theProjectStatus is done then
@@ -175,7 +186,7 @@ tell application "Things3"
 							set theProject to project theProjectName
 						else
 							-- add tags
-							set theProject to make new project with properties {name:theProjectName, note:theProjectNotes}
+							set theProject to make new project with properties {name:theProjectName, note:theProjectNotes, due date: thedueDate, defer date: theDeferDate}
 						end if
 						
 						if theProjectStatus is done then
@@ -193,6 +204,7 @@ tell application "Things3"
 			end repeat
 		end tell
 	end tell
+	log "Finished processing " & (count of projectList) & " projects"
 	
 	--
 	--  Import T3 To Dos into OF3
@@ -200,7 +212,10 @@ tell application "Things3"
 	
 	-- Combine all the folders you want to search here
 	-- Options are: Inbox, Today, Anytime, Upcoming, Someday, Lonely Projects, Logbook, Trash
-	set theTodos to to dos of list "Inbox"  & to dos of list "Anytime" & to dos of list "Upcoming" & to dos of list "Someday" & to dos of list "Lonely Projects" & to dos of list "Logbook"
+	set theTodos to to dos of list "Inbox"  & to dos of list "Anytime" & to dos of list "Upcoming"
+
+
+	-- set theTodos to to dos of list "Logbook"
 	
 	-- Go through all the tasks in the combined lists
 	log "Processing " & (count of theTodos) & " entries"
@@ -278,7 +293,9 @@ tell application "Things3"
 						set completion date of newTask to theCompletionDate
 					else if theStatus is "canceled" then
 						mark complete newTask
-						set status of newTask to dropped
+						-- set status of newTask to dropped
+						-- Fix for dropped tasks
+						add droppedTag to (tags of newTask)
 						set completion date of newTask to theCompletionDate
 					else if theStatus is "open" then
 						mark incomplete newTask
