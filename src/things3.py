@@ -51,8 +51,8 @@ class Project:
     title: str
     note: str = ""
     tags: list[Tag] = field(default_factory=list)
-    headings: list[Heading] = field(default_factory=list)
     tasks: list[Task] = field(default_factory=list)
+    headings: list[Heading] = field(default_factory=list)
     status: Status = Status.ACTIVE
     due_date: Optional[date] = None
     defer_date: Optional[date] = None
