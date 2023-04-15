@@ -90,3 +90,9 @@ WHERE task.type == 0;
 
 --     WHERE task IN (SELECT demo_task_id.uuid FROM demo_task_id)
 
+
+SELECT title, stopDate, startDate, reminderTime, *
+FROM TMTask
+WHERE reminderTime IS NOT NULL
+  AND status = 0
+ORDER BY reminderTime

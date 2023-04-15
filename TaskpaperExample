@@ -1,0 +1,38 @@
+- (null)
+	- No Project In Things @parallel(true) @autodone(false)
+        - Example task that is completed @parallel(true) @autodone(false) @done(2023-04-14 18:58)
+        - Example task that is dropped @parallel(true) @autodone(false) @dropped(2023-04-14 18:58)
+
+	- Project Outside The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+		- Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+		- Task w/ Subtask in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+		- Defered Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child) @defer(2024-01-01 00:00)
+		- Someday Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child, SOMEDAY)
+- The Area
+	- Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent) @due(2023-07-14 00:00)
+		Some project note
+
+		- Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent)
+			Some Task note
+
+		- Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent) @due(2023-06-14 00:00)
+		- Task w/ Subtask in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent : Task Tag Child)
+		- Task w/ EVERYTHING in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent : Task Tag Child) @due(2023-05-10 00:00) @defer(2023-04-19 00:00)
+			Some note
+
+		- Defered Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent) @defer(2024-01-01 00:00)
+		- Task w/ EVERYTHING in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent : Task Tag Child) @due(4001-01-01 00:00)
+			Some note
+
+		- Someday Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, SOMEDAY)
+		- Task in Heading in Project in The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent)
+	- Someday Project In The Area @parallel(true) @autodone(false) @context(SOMEDAY) @tags(SOMEDAY)
+		- Task in Project In The Area @parallel(true) @autodone(false) @context(SOMEDAY) @tags(SOMEDAY)
+		- Task w/ Subtask in Project In The Area @parallel(true) @autodone(false) @context(SOMEDAY) @tags(SOMEDAY)
+		- Defered Task in Project In The Area @parallel(true) @autodone(false) @context(SOMEDAY) @tags(SOMEDAY) @defer(2024-01-01 00:00)
+		- Someday Task in Project In The Area @parallel(true) @autodone(false) @context(SOMEDAY) @tags(SOMEDAY)
+	- Defered Project In The Area @parallel(true) @autodone(false) @defer(2024-01-01 00:00)
+		- Task in Project In The Area @parallel(true) @autodone(false)
+		- Task w/ Subtask in Project In The Area @parallel(true) @autodone(false)
+		- Defered Task in Project In The Area @parallel(true) @autodone(false) @defer(2024-01-01 00:00)
+		- Someday Task in Project In The Area @parallel(true) @autodone(false)

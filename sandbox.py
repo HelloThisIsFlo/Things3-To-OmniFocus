@@ -20,7 +20,6 @@ if __name__ == "__main__":
     m = 4
     d = 14
     integer_value = (y << 16) | (m << 12) | (d << 7)
-    (1 << 12) - 1
 
     print(integer_value)
 
@@ -33,3 +32,13 @@ if __name__ == "__main__":
     print(day(integer_value))
     integer_value = 132598144
     print(f"{day(integer_value)}-{month(integer_value)}-{year(integer_value)}")
+    import datetime
+
+    timestamp = 1681465136.887539
+    dt = datetime.datetime.fromtimestamp(timestamp)
+    print(dt)
+
+    timestamp = 1507852288
+    dt = datetime.datetime.fromtimestamp(timestamp)
+    print(dt)
+    print(201326592.0 / (3 * 60))
