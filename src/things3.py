@@ -25,7 +25,7 @@ class Task:
     title: str
     note: str = ""
     tags: list[Tag] = field(default_factory=list)
-    checklist: list[str] = field(default_factory=list)
+    checklist: list["Task"] = field(default_factory=list)
     status: Status = Status.ACTIVE
     due_date: Optional[date] = None
     defer_date: Optional[date] = None

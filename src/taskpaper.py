@@ -51,7 +51,7 @@ def convert_task(task: Task, indent=0) -> str:
         return newline(indent) + task.note.replace("\n", newline(indent)) + "\n"
 
     def format_checklist():
-        return format_subtasks([Task(item) for item in task.checklist], tags, indent)
+        return format_subtasks(task.checklist, tags, indent)
 
     indent += 1
     header = [task.title]
@@ -81,6 +81,13 @@ def convert_task(task: Task, indent=0) -> str:
 
 
 def convert_project(project: Project, indent=0) -> str:
+    def format_headings():
+        if not project.headings:
+            return ""
+        return newline(indent) + newline(indent).join(
+            convert_task(Task(h.title, checklist=h.tasks, tags=project.tags), indent) for h in project.headings
+        )
+
     project_as_task = Task(
         title=project.title,
         note=project.note,
@@ -95,4 +102,4 @@ def convert_project(project: Project, indent=0) -> str:
 
     indent += 1
     project_taskpaper = convert_task(project_as_task)
-    return project_taskpaper + format_subtasks(project.tasks, project.tags, indent)
+    return project_taskpaper + format_subtasks(project.tasks, project.tags, indent) + format_headings()

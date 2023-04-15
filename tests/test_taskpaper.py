@@ -49,8 +49,8 @@ class TestConvertTask:
             TASK_TITLE,
             tags=[Tag(name="tag1")],
             checklist=[
-                "Checklist item 1",
-                "Checklist item 2",
+                Task("Checklist item 1"),
+                Task("Checklist item 2"),
             ],
         )
         assert convert_task(task) == dedent(
@@ -65,8 +65,8 @@ class TestConvertTask:
             TASK_TITLE,
             note="note",
             checklist=[
-                "Checklist item 1",
-                "Checklist item 2",
+                Task("Checklist item 1"),
+                Task("Checklist item 2"),
             ],
         )
         assert convert_task(task) == dedent(
@@ -126,9 +126,11 @@ class TestConvertProject:
                 Task("Task 1 - Basic"),
                 Task("Task 2 - With Note", "The note"),
                 Task("Task 3 - With Tags", tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))]),
-                Task("Task 4 - With Checklist", checklist=["Checklist item 1", "Checklist item 2"]),
+                Task("Task 4 - With Checklist", checklist=[Task("Checklist item 1"), Task("Checklist item 2")]),
                 Task(
-                    "Task 5 - With Note and Checklist", "The note", checklist=["Checklist item 1", "Checklist item 2"]
+                    "Task 5 - With Note and Checklist",
+                    "The note",
+                    checklist=[Task("Checklist item 1"), Task("Checklist item 2")],
                 ),
             ],
         )
@@ -152,7 +154,6 @@ class TestConvertProject:
                     - Checklist item 2 @parallel(true) @autodone(false) @tags(project_tag)"""
         )
 
-    @pytest.mark.skip("Not yet implemented")
     def test_project_with_headings_and_tasks(self):
         project = Project(
             "The Project",
@@ -163,7 +164,7 @@ class TestConvertProject:
                     "Root Task - With Note and Checklist",
                     "The note",
                     tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))],
-                    checklist=["Checklist item 1", "Checklist item 2"],
+                    checklist=[Task("Checklist item 1"), Task("Checklist item 2")],
                 ),
             ],
             headings=[
@@ -183,6 +184,7 @@ class TestConvertProject:
             """\
             - The Project @parallel(true) @autodone(false) @tags(project_tag)
                 The project note
+
                 - Root Task - With Note and Checklist @parallel(true) @autodone(false) @tags(project_tag, tag1, tag_parent : tag2_child)
                     The note
                     
