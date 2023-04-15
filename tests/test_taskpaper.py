@@ -3,8 +3,16 @@ from textwrap import dedent
 
 import pytest
 
-from src.taskpaper import convert_task, DEFER_TIME, DUE_TIME, convert_project, SOMEDAY_TAG, REPEATING_TAG
-from src.things3 import Task, Tag, Status, Project, Heading
+from src.taskpaper import (
+    convert_task,
+    DEFER_TIME,
+    DUE_TIME,
+    convert_project,
+    SOMEDAY_TAG,
+    convert_area,
+    MANUALLY_CONVERT_TAGS,
+)
+from src.things3 import Task, Tag, Status, Project, Heading, Area
 
 TASK_TITLE = "The Task"
 
@@ -84,7 +92,26 @@ class TestConvertTask:
 
     def test_repeating_task__flags_with_tags(self):
         task = Task(TASK_TITLE, repeating=True)
-        assert convert_task(task) == f"- The Task @parallel(true) @autodone(false) @tags({REPEATING_TAG})"
+        assert (
+            convert_task(task)
+            == f"- The Task @parallel(true) @autodone(false) @tags({MANUALLY_CONVERT_TAGS['REPEATING']})"
+        )
+
+    def test_repeating_task_with_checklist__flags_with_tags__tag_does_not_propagate_to_checklist_items(self):
+        task = Task(
+            TASK_TITLE,
+            repeating=True,
+            checklist=[
+                Task("Checklist item 1"),
+                Task("Checklist item 2"),
+            ],
+        )
+        assert convert_task(task) == dedent(
+            f"""\
+                - The Task @parallel(true) @autodone(false) @tags({MANUALLY_CONVERT_TAGS['REPEATING']})
+                    - Checklist item 1 @parallel(true) @autodone(false)
+                    - Checklist item 2 @parallel(true) @autodone(false)"""
+        )
 
 
 class TestConvertProject:
@@ -97,8 +124,6 @@ class TestConvertProject:
             title="The Project",
             note="The project note",
             tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))],
-            # headings=[],
-            # tasks=[],
             status=Status.ACTIVE,
             due_date=date(2023, 5, 10),
             defer_date=date(2023, 4, 19),
@@ -106,16 +131,44 @@ class TestConvertProject:
         )
         assert convert_project(project) == dedent(
             f"""\
-            - The Project @parallel(true) @autodone(false) @defer(2023-04-19 {DEFER_TIME}) @due(2023-05-10 {DUE_TIME}) @tags(tag1, tag_parent : tag2_child, {REPEATING_TAG})
+            - The Project @parallel(true) @autodone(false) @defer(2023-04-19 {DEFER_TIME}) @due(2023-05-10 {DUE_TIME}) @tags(tag1, tag_parent : tag2_child, {MANUALLY_CONVERT_TAGS['REPEATING']})
                 The project note
             """
         )
 
-    def test_someday_project_uses_someday_tag(self):
+    def test_someday_project_uses_someday_project_tag__someday_project_tag_does_not_propagate_to_tasks(self):
         # Note: It's not possible to set a project "on hold" via TaskPaper, so we flag it and let the user manually
         #       resolve it.
-        project = Project("The Project", someday=True)
-        assert convert_project(project) == f"- The Project @parallel(true) @autodone(false) @tags({SOMEDAY_TAG})"
+        project = Project(
+            "The Project",
+            someday=True,
+            tasks=[
+                Task("Task 1 - Basic"),
+                Task("Task 2 - With Tags", tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))]),
+            ],
+        )
+        assert convert_project(project) == dedent(
+            f"""\
+                - The Project @parallel(true) @autodone(false) @tags({MANUALLY_CONVERT_TAGS['SOMEDAY_PROJECT']})
+                    - Task 1 - Basic @parallel(true) @autodone(false)
+                    - Task 2 - With Tags @parallel(true) @autodone(false) @tags(tag1, tag_parent : tag2_child)"""
+        )
+
+    def test_repeating_project__repeating_project_tag_does_not_propagate_to_tasks(self):
+        project = Project(
+            "The Project",
+            repeating=True,
+            tasks=[
+                Task("Task 1 - Basic"),
+                Task("Task 2 - With Tags", tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))]),
+            ],
+        )
+        assert convert_project(project) == dedent(
+            f"""\
+                - The Project @parallel(true) @autodone(false) @tags({MANUALLY_CONVERT_TAGS['REPEATING']})
+                    - Task 1 - Basic @parallel(true) @autodone(false)
+                    - Task 2 - With Tags @parallel(true) @autodone(false) @tags(tag1, tag_parent : tag2_child)"""
+        )
 
     def test_project_with_tasks(self):
         project = Project(
@@ -195,20 +248,48 @@ class TestConvertProject:
                     - Task 2 - With Tags @parallel(true) @autodone(false) @tags(project_tag, tag1, tag_parent : tag2_child)"""
         )
 
-    #     def test_project_with_no_tasks(self):
-    #         project = Project(
-    #             "The Project",
-    #             note="The note",
-    #             tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))],
-    #             headings=[],
-    #             tasks=[],
-    #             status=Status.ACTIVE,
-    #             due_date=date(2023, 5, 10),
-    #             defer_date=date(2023, 4, 19),
-    #             someday=True,
-    #             repeating=True,
-    #             completion_datetime=None,
-    #         )
-    #         assert convert_project(project) == dedent("""\
-    # - The Project @parallel(true) @autodone(false) @tags(tag1, tag_parent : tag2_child) @defer(2023-04-19 00:00) @due(2023-05-10 00:00) @someday(true) @repeating(true)
-    #
+
+class TestConvertArea:
+    def test_area_with_projects_and_tags(self):
+        area = Area(
+            "The Area",
+            tags=[Tag(name="area_tag")],
+            projects=[
+                Project("Project 1"),
+                Project(
+                    "Project 2",
+                    tags=[Tag(name="project_tag")],
+                    tasks=[
+                        Task(
+                            "Task 1 - With Tags",
+                            tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))],
+                        )
+                    ],
+                ),
+            ],
+        )
+        assert convert_area(area) == dedent(
+            """\
+            - The Area @parallel(true) @autodone(false) @tags(area_tag)
+                - Project 1 @parallel(true) @autodone(false) @tags(area_tag)
+                - Project 2 @parallel(true) @autodone(false) @tags(area_tag, project_tag)
+                    - Task 1 - With Tags @parallel(true) @autodone(false) @tags(area_tag, project_tag, tag1, tag_parent : tag2_child)"""
+        )
+
+    def test_area_with_tasks__wrap_in_a_single_actions_project__tasks_dont_inherit_single_actions_tag(self):
+        area = Area(
+            "The Area",
+            tags=[Tag(name="area_tag")],
+            tasks=[
+                Task(
+                    "Task 1 - With Tags",
+                    tags=[Tag(name="tag1"), Tag(name="tag2_child", parent=Tag("tag_parent"))],
+                )
+            ],
+        )
+        assert convert_area(area) == dedent(
+            f"""\
+            - The Area @parallel(true) @autodone(false) @tags(area_tag)
+                - [The Area] @parallel(true) @autodone(false) @tags(area_tag, {MANUALLY_CONVERT_TAGS['SINGLE-ACTIONS']})
+                    - Task 1 - With Tags @parallel(true) @autodone(false) @tags(area_tag, tag1, tag_parent : tag2_child)"""
+        )
