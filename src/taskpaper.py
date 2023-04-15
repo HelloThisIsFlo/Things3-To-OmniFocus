@@ -2,7 +2,7 @@
 # Whenever I actually use the word 'tag' it will refer to a Things 3 tag.
 from dataclasses import replace
 
-from src.things3 import *
+from src.things3.hierarchy import *
 
 # Note: Converting areas is not supported. Instead, convert projects and generate 1 file per area
 

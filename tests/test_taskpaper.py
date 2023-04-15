@@ -12,7 +12,7 @@ from src.taskpaper import (
     convert_area,
     MANUALLY_CONVERT_TAGS,
 )
-from src.things3 import Task, Tag, Status, Project, Heading, Area
+from src.things3.hierarchy import Task, Tag, Status, Project, Heading, Area
 
 TASK_TITLE = "The Task"
 

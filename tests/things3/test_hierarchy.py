@@ -1,6 +1,6 @@
 import pytest
 
-from src.things3 import Task, Status
+from src.things3.hierarchy import Task, Status
 
 
 def test_completed_task_must_have_completion_datetime():
