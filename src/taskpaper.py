@@ -1,7 +1,11 @@
 # To avoid confusion I will refer to TaskPaper 'tags' as 'attributes'.
 # Whenever I actually use the word 'tag' it will refer to a Things 3 tag.
 
+# Note: Converting areas is not supported. Instead, convert projects and generate 1 file per area
+
 from src.things3 import *
+
+NEWLINE_WITH_INDENT = "\n    "
 
 DEFER_TIME = "08:00"
 DUE_TIME = "17:00"
@@ -23,13 +27,20 @@ def convert_task(task: Task) -> str:
     def append_attribute(attribute: str, value: str) -> None:
         header.append(f"@{attribute}({value})")
 
+    def format_date(date, time):
+        return f"{date.isoformat()} {time}"
+
     def format_note() -> str:
         if not task.note:
             return ""
-        return "\n    " + task.note.replace("\n", "\n    ") + "\n"
+        return NEWLINE_WITH_INDENT + task.note.replace("\n", NEWLINE_WITH_INDENT) + "\n"
 
-    def format_date(date, time):
-        return f"{date.isoformat()} {time}"
+    def format_checklist() -> str:
+        if not task.checklist:
+            return ""
+        return NEWLINE_WITH_INDENT + NEWLINE_WITH_INDENT.join(
+            convert_task(Task(item, tags=task.tags)) for item in task.checklist
+        )
 
     header = [task.title]
     append_attribute("parallel", "true")
@@ -45,4 +56,4 @@ def convert_task(task: Task) -> str:
     if task.status == Status.DROPPED:
         append_attribute("dropped", task.completion_datetime.isoformat())
 
-    return "- " + " ".join(header) + format_note()
+    return "- " + " ".join(header) + format_note() + format_checklist()

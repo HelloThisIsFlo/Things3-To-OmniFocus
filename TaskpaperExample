@@ -36,3 +36,24 @@
 		- Task w/ Subtask in Project In The Area @parallel(true) @autodone(false)
 		- Defered Task in Project In The Area @parallel(true) @autodone(false) @defer(2024-01-01 00:00)
 		- Someday Task in Project In The Area @parallel(true) @autodone(false)
+
+- Some task added without context @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent)
+	this is the note
+
+	- nested task @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent)
+	- hello @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent)
+
+
+- The Task @parallel(true) @autodone(false)
+	Some note
+
+	- Checklist item 1 @parallel(true) @autodone(false)
+	- Checklist item 2 @parallel(true) @autodone(false)
+
+
+
+- The Task @parallel(true) @autodone(false) @context(tag1) @tags(tag1)
+	Some note
+
+	- Checklist item 1 @parallel(true) @autodone(false) @context(tag1) @tags(tag1)
+	- Checklist item 2 @parallel(true) @autodone(false) @context(tag1) @tags(tag1)

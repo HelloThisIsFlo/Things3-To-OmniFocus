@@ -45,3 +45,39 @@ def test_convert_completed_task():
 def test_convert_dropped_task():
     task = Task(TASK_TITLE, status=Status.DROPPED, completion_datetime=datetime(2023, 5, 10, 5, 45, 30))
     assert convert_task(task) == "- The Task @parallel(true) @autodone(false) @dropped(2023-05-10T05:45:30)"
+
+
+def test_convert_task_with_checklist__tags_are_inherited():
+    task = Task(
+        TASK_TITLE,
+        tags=[Tag(name="tag1")],
+        checklist=[
+            "Checklist item 1",
+            "Checklist item 2",
+        ],
+    )
+    assert convert_task(task) == dedent(
+        """\
+    - The Task @parallel(true) @autodone(false) @tags(tag1)
+        - Checklist item 1 @parallel(true) @autodone(false) @tags(tag1)
+        - Checklist item 2 @parallel(true) @autodone(false) @tags(tag1)"""
+    )
+
+
+def test_convert_task_with_checklist_and_note():
+    task = Task(
+        TASK_TITLE,
+        note="note",
+        checklist=[
+            "Checklist item 1",
+            "Checklist item 2",
+        ],
+    )
+    assert convert_task(task) == dedent(
+        """\
+    - The Task @parallel(true) @autodone(false)
+        note
+
+        - Checklist item 1 @parallel(true) @autodone(false)
+        - Checklist item 2 @parallel(true) @autodone(false)"""
+    )
