@@ -58,7 +58,7 @@ class Project:
     defer_date: Optional[date] = None
     someday: bool = False
     repeating: bool = False
-    completion_date: Optional[date] = None
+    completion_datetime: Optional[date] = None
 
 
 @dataclass

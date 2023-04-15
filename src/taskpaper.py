@@ -9,6 +9,8 @@ NEWLINE_WITH_INDENT = "\n    "
 
 DEFER_TIME = "08:00"
 DUE_TIME = "17:00"
+SOMEDAY_TAG = "SOMEDAY"
+REPEATING_TAG = "REPEATING"
 
 
 def convert_tags(tags: list[Tag]) -> str:
@@ -45,8 +47,13 @@ def convert_task(task: Task) -> str:
     header = [task.title]
     append_attribute("parallel", "true")
     append_attribute("autodone", "false")
-    if task.tags:
-        append_attribute("tags", convert_tags(task.tags))
+    tags = task.tags.copy()
+    if task.someday:
+        tags.append(Tag(SOMEDAY_TAG))
+    if task.repeating:
+        tags.append(Tag(REPEATING_TAG))
+    if tags:
+        append_attribute("tags", convert_tags(tags))
     if task.defer_date:
         append_attribute("defer", format_date(task.defer_date, DEFER_TIME))
     if task.due_date:
@@ -57,3 +64,19 @@ def convert_task(task: Task) -> str:
         append_attribute("dropped", task.completion_datetime.isoformat())
 
     return "- " + " ".join(header) + format_note() + format_checklist()
+
+
+def convert_project(project: Project):
+    return convert_task(
+        Task(
+            title=project.title,
+            note=project.note,
+            tags=project.tags,
+            status=project.status,
+            due_date=project.due_date,
+            defer_date=project.defer_date,
+            someday=project.someday,
+            repeating=project.repeating,
+            completion_datetime=project.completion_datetime,
+        )
+    )
