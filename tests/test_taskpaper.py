@@ -270,10 +270,9 @@ class TestConvertArea:
         )
         assert convert_area(area) == dedent(
             """\
-            - The Area @parallel(true) @autodone(false) @tags(area_tag)
-                - Project 1 @parallel(true) @autodone(false) @tags(area_tag)
-                - Project 2 @parallel(true) @autodone(false) @tags(area_tag, project_tag)
-                    - Task 1 - With Tags @parallel(true) @autodone(false) @tags(area_tag, project_tag, tag1, tag_parent : tag2_child)"""
+            - Project 1 @parallel(true) @autodone(false) @tags(area_tag)
+            - Project 2 @parallel(true) @autodone(false) @tags(area_tag, project_tag)
+                - Task 1 - With Tags @parallel(true) @autodone(false) @tags(area_tag, project_tag, tag1, tag_parent : tag2_child)"""
         )
 
     def test_area_with_tasks__wrap_in_a_single_actions_project__tasks_dont_inherit_single_actions_tag(self):
@@ -289,7 +288,6 @@ class TestConvertArea:
         )
         assert convert_area(area) == dedent(
             f"""\
-            - The Area @parallel(true) @autodone(false) @tags(area_tag)
-                - [The Area] @parallel(true) @autodone(false) @tags(area_tag, {MANUALLY_CONVERT_TAGS['SINGLE-ACTIONS']})
-                    - Task 1 - With Tags @parallel(true) @autodone(false) @tags(area_tag, tag1, tag_parent : tag2_child)"""
+            - [The Area] @parallel(true) @autodone(false) @tags(area_tag, {MANUALLY_CONVERT_TAGS['SINGLE-ACTIONS']})
+                - Task 1 - With Tags @parallel(true) @autodone(false) @tags(area_tag, tag1, tag_parent : tag2_child)"""
         )

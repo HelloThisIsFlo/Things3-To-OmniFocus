@@ -114,19 +114,14 @@ def convert_project(project: Project, indent=0) -> str:
     indent += 1
     project_taskpaper = convert_task(project_as_task)
     return (
-        project_taskpaper
-        + format_subtasks(project.tasks, project.tags, indent)
-        + format_headings()
+            project_taskpaper
+            + format_subtasks(project.tasks, project.tags, indent)
+            + format_headings()
     )
 
 
 def convert_area(area: Area) -> str:
-    indent = 1
-
-    area_as_task = Task(
-        title=area.title,
-        tags=area.tags,
-    )
+    indent = 0
 
     projects = area.projects
     if area.tasks:
@@ -139,8 +134,4 @@ def convert_area(area: Area) -> str:
 
     projects = [replace(p, tags=area.tags + p.tags) for p in projects]
 
-    return (
-        convert_task(area_as_task)
-        + newline(indent)
-        + newline(indent).join(convert_project(p, indent) for p in projects)
-    )
+    return newline(indent).join(convert_project(p, indent) for p in projects)
