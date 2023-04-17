@@ -37,7 +37,9 @@ class Task:
         match self.status:
             case Status.COMPLETED | Status.DROPPED:
                 if not self.completion_datetime:
-                    raise ValueError("A completed task must have a completion date")
+                    raise ValueError(
+                        "A completed task must have a completion date"
+                    )
 
 
 @dataclass

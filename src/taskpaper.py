@@ -36,7 +36,8 @@ def format_subtasks(subtasks: list[Task], tags: list[Tag], indent=0) -> str:
         return ""
     tags = [t for t in tags if t.name not in MANUALLY_CONVERT_TAGS.values()]
     return newline(indent) + newline(indent).join(
-        convert_task(replace(task, tags=tags + task.tags), indent) for task in subtasks
+        convert_task(replace(task, tags=tags + task.tags), indent)
+        for task in subtasks
     )
 
 
@@ -90,13 +91,20 @@ def convert_project(project: Project, indent=0) -> str:
         if not project.headings:
             return ""
         return newline(indent) + newline(indent).join(
-            convert_task(Task(h.title, checklist=h.tasks, tags=project.tags), indent) for h in project.headings
+            convert_task(
+                Task(h.title, checklist=h.tasks, tags=project.tags), indent
+            )
+            for h in project.headings
         )
 
     project_as_task = Task(
         title=project.title,
         note=project.note,
-        tags=([Tag(MANUALLY_CONVERT_TAGS["SOMEDAY_PROJECT"])] + project.tags if project.someday else project.tags),
+        tags=(
+            [Tag(MANUALLY_CONVERT_TAGS["SOMEDAY_PROJECT"])] + project.tags
+            if project.someday
+            else project.tags
+        ),
         status=project.status,
         due_date=project.due_date,
         defer_date=project.defer_date,
@@ -107,7 +115,11 @@ def convert_project(project: Project, indent=0) -> str:
 
     indent += 1
     project_taskpaper = convert_task(project_as_task)
-    return project_taskpaper + format_subtasks(project.tasks, project.tags, indent) + format_headings()
+    return (
+        project_taskpaper
+        + format_subtasks(project.tasks, project.tags, indent)
+        + format_headings()
+    )
 
 
 def convert_area(area: Area) -> str:
@@ -121,7 +133,9 @@ def convert_area(area: Area) -> str:
     projects = area.projects
     if area.tasks:
         area_project = Project(
-            title=f"[{area.title}]", tags=[Tag(MANUALLY_CONVERT_TAGS["SINGLE-ACTIONS"])], tasks=area.tasks
+            title=f"[{area.title}]",
+            tags=[Tag(MANUALLY_CONVERT_TAGS["SINGLE-ACTIONS"])],
+            tasks=area.tasks,
         )
         projects = [area_project] + area.projects
 

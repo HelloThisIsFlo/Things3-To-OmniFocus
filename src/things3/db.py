@@ -15,15 +15,15 @@ class Type(Enum):
 
 
 # Tag Queries
-SQL_FETCH_TAG = "select title from TMTag where uuid = ?"
-SQL_AREA_FETCH_TAGS = """select tag.title, tag.parent from TMArea area
-                        join TMAreaTag areaTag on areaTag.areas = area.uuid
-                        join TMTag tag on tag.uuid = areaTag.tags
-                        where area.uuid = ?"""
-SQL_TASK_OR_PROJECT_FETCH_TAGS = """select tag.title, tag.parent from TMTask task
-                        join TMTaskTag taskTag on taskTag.tasks = task.uuid
-                        join TMTag tag on tag.uuid = taskTag.tags
-                        where task.uuid = ?"""
+SQL_FETCH_TAG = "SELECT title FROM TMTag WHERE uuid = ?"
+SQL_AREA_FETCH_TAGS = """SELECT tag.title, tag.parent FROM TMArea area
+                        JOIN TMAreaTag areaTag ON areaTag.areas = area.uuid
+                        JOIN TMTag tag ON tag.uuid = areaTag.tags
+                        WHERE area.uuid = ?"""
+SQL_TASK_OR_PROJECT_FETCH_TAGS = """SELECT tag.title, tag.parent FROM TMTask task
+                        JOIN TMTaskTag taskTag ON taskTag.tasks = task.uuid
+                        JOIN TMTag tag ON tag.uuid = taskTag.tags
+                        WHERE task.uuid = ?"""
 
 # IDs Queries
 SQL_AREA_FETCH_TASK_IDS = f"""select uuid 
@@ -62,10 +62,10 @@ SQL_HEADING_FETCH_TASK_IDS = f"""select uuid
 SQL_FETCH_PROJECT_OR_HEADING_OR_TASK = """
 SELECT title, notes, status, deadline, startDate, start, rt1_recurrenceRule, stopDate 
 FROM TMTask
-where uuid = ?
+WHERE uuid = ?
 """
 SQL_FETCH_CHECKLIST_ITEMS = (
-    'select title from TMChecklistItem where task == ? order by "index"'
+    'SELECT title FROM TMChecklistItem WHERE task == ? ORDER BY "index"'
 )
 
 
@@ -102,7 +102,7 @@ class DB:
     def fetch_area(self, area_uuid):
         def fetch_title():
             row = self.conn.execute(
-                "SELECT title FROM TMArea where uuid = ?", (area_uuid,)
+                "SELECT title FROM TMArea WHERE uuid = ?", (area_uuid,)
             ).fetchone()
             if not row:
                 raise ValueError(f"Area with uuid '{area_uuid}' does not exist")
