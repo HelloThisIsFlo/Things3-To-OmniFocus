@@ -1,5 +1,7 @@
-
 output
+
+main.sqlite-shm
+main.sqlite-wal
 
 debug*
 codestream.xml
