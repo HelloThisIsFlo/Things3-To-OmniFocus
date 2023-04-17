@@ -39,6 +39,10 @@ def format_subtasks(subtasks: list[Task], tags: list[Tag], indent=0) -> str:
     )
 
 
+def escape_dashes(note: str) -> str:
+    return note.replace("-", "–")
+
+
 def convert_task(task: Task, indent=0) -> str:
     # NOTE: No need to add the '@context' attribute, it is added automatically by OmniFocus.
     #       Not adding it removes a lot of complexity as its value depends on the tags of the parent project.
@@ -52,7 +56,11 @@ def convert_task(task: Task, indent=0) -> str:
     def format_note() -> str:
         if not task.note:
             return ""
-        return newline(indent) + task.note.replace("\n", newline(indent)) + "\n"
+        return (
+                newline(indent)
+                + task.note.replace("\n", newline(indent)).replace("-", "–")
+                + newline(0)
+        )
 
     def format_checklist():
         return format_subtasks(task.checklist, tags, indent)
