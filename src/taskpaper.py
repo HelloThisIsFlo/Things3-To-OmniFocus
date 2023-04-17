@@ -2,6 +2,7 @@
 # Whenever I actually use the word 'tag' it will refer to a Things 3 tag.
 from dataclasses import replace
 from datetime import time
+import re
 
 from src.things3.hierarchy import *
 
@@ -54,10 +55,14 @@ def convert_task(task: Task, indent=0) -> str:
         def escape_dash_with_emdash(note: str) -> str:
             return note.replace("-", "–")
 
+        def escape_end_of_line_column(note: str) -> str:
+            return re.sub(r":$", ": ", note, flags=re.MULTILINE)
+
         if not task.note:
             return ""
 
         note = escape_dash_with_emdash(task.note)
+        note = escape_end_of_line_column(note)
         return (
                 newline(indent)
                 + note.replace("\n", newline(indent))

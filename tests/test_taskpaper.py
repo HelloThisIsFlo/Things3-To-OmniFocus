@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime
 from textwrap import dedent
 
@@ -46,6 +47,20 @@ class TestConvertTask:
                 – The note
                 – Second line of the note
                 – Third line of the note
+            """
+        )
+
+    def test_with_note__escape_end_of_line_column_by_adding_a_space(self):
+        task = Task(TASK_TITLE,
+                    "This line ends in with a column note:\n"
+                    "- It is problematic because:\n"
+                    "  - OmniFocus would believe this describes a project")
+        assert convert_task(task) == dedent(
+            """\
+            - The Task @parallel(true) @autodone(false)
+                This line ends in with a column note: 
+                – It is problematic because: 
+                  – OmniFocus would believe this describes a project
             """
         )
 
