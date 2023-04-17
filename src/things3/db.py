@@ -1,17 +1,22 @@
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, date
 from enum import Enum
 from pathlib import Path
 
 from src.things3.hierarchy import Area, Tag, Task, Status, Project, Heading
-from src.utils import convert_bin_date
 
 
 class Type(Enum):
     TASK = 0
     PROJECT = 1
     HEADING = 2
+
+
+@dataclass
+class AreaInfo:
+    uuid: str
+    title: str
 
 
 # Tag Queries
@@ -69,10 +74,21 @@ SQL_FETCH_CHECKLIST_ITEMS = (
 )
 
 
-@dataclass
-class AreaInfo:
-    uuid: str
-    title: str
+def convert_bin_date(bin_date):
+    start_year = 16
+    start_month = 12
+    start_day = 7
+
+    def day():
+        return (((1 << start_month) - 1) & bin_date) >> start_day
+
+    def month():
+        return (((1 << start_year) - 1) & bin_date) >> start_month
+
+    def year():
+        return bin_date >> start_year
+
+    return date(year(), month(), day())
 
 
 class DB:

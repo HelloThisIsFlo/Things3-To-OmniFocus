@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from src.things3.db import DB, AreaInfo
+from src.things3.db import DB, AreaInfo, convert_bin_date
 from src.things3.hierarchy import Area, Tag, Task, Status, Project, Heading
 
 AREA_ID_THE_AREA = "Dr6Ji5SN5eyuDWzKxK9WL9"
@@ -14,6 +14,12 @@ AREA_ID_EMPTY = "Jbjf23KssoqXWDjZzGngut"
 @pytest.fixture
 def db():
     return DB(Path(__file__).parent / "example_db" / "main.sqlite")
+
+
+def test_convert_bin_date():
+    # See: https://www.reddit.com/r/thingsapp/comments/12ivjn6/comment/jfxg3er
+    assert convert_bin_date(132598144) == date(2023, 4, 19)
+    assert convert_bin_date(132601088) == date(2023, 5, 10)
 
 
 def test_list_areas(db):
