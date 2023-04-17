@@ -19,9 +19,10 @@ OUTPUT_DIR = Path(__file__).parent / "output"
 
 
 class Main:
-    def __init__(self, db_path: Path, output_dir: Path):
+    def __init__(self, db_path: Path, output_dir: Path, include_logbook: bool):
         self.db = DB(db_path)
         self.output_dir = output_dir
+        self.ignore_logbook = not include_logbook
 
     def export_all(self):
         self.output_dir.mkdir(exist_ok=True)
@@ -36,7 +37,7 @@ class Main:
             f"Exporting '{area.title}' to "
             f"'{self.output_dir}/{area.title}.taskpaper'"
         )
-        area = self.db.fetch_area(area.uuid)
+        area = self.db.fetch_area(area.uuid, self.ignore_logbook)
         area_as_taskpaper = taskpaper.convert_area(area)
         with open(output_path, "w") as output_file:
             output_file.write(area_as_taskpaper)
@@ -47,7 +48,7 @@ class Main:
     "--dbpath",
     default=DEFAULT_DB_PATH,
     help="Path to the Things 3 database file. "
-    "Can use globbing (e.g. `~/**/main-*.sqlite`)",
+         "Can use globbing (e.g. `~/**/main-*.sqlite`)",
 )
 @click.option(
     "--output",
@@ -55,11 +56,17 @@ class Main:
     help="Directory where the exported TaskPaper files should be written",
     type=click.Path(file_okay=False),
 )
-def main(dbpath, output):
+@click.option(
+    "--include-logbook",
+    default=False,
+    help="EXPERIMENTAL: Include the Tasks/Projects that are completed or dropped",
+    is_flag=True
+)
+def main(dbpath, output, include_logbook):
     if not (matching_db_paths := glob(expanduser(dbpath))):
         raise ValueError(f"Invalid DB Path: {dbpath}")
 
-    Main(Path(matching_db_paths[0]), output).export_all()
+    Main(Path(matching_db_paths[0]), output, include_logbook).export_all()
 
 
 if __name__ == "__main__":

@@ -13,6 +13,10 @@ There it's just a matter of copy-pasting the content of each file into a OmniFoc
     - Repeating tasks and projects _will_ be migrated, but their repeating schedule will have to be set manually in
       OmniFocus
     - See: [How to use](#how-to-use)
+- Logbook items (completed/dropped tasks or projects)
+    - Logbook items _can_ be migrated with an experimental option,
+      but most of them won't be marked as complete/dropped in OmniFocus
+    - See: [`--include-logbook` option](#--include-logbook)
 
 # How to use
 
@@ -90,3 +94,13 @@ Note: `--dbpath` supports globbing (e.g. `~/**/main-*.sqlite`)
 > Setting a project to be a Single-Action list is not possible via TaskPaper
 > _(or couldn't figure out how to do it)_, so we have to do it manually.
 
+
+---
+## Experimental Option
+### `--include-logbook`
+This option will include the Project/Tasks that completed or dropped. It is disabled by default because when
+importing in OmniFocus:
+- It won't make a Task as complete/dropped if not _all_ of its children have been explicitly marked complete/dropped as well
+- It won't ever mark a Project as complete/dropped, even if all of its children have been explicitly marked complete/dropped.
+
+So, it results in a LOT of noise. But, the option is there, in case you want to try it out.
