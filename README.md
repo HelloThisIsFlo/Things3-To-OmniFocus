@@ -1,7 +1,5 @@
 # Things 3 to OmniFocus
 
----
-
 This project helps you migrate your Things 3 database into OmniFocus.
 
 This is done with the use of the TaskPaper format. This script will convert each Area into a TaskPaper file.
@@ -17,8 +15,6 @@ There it's just a matter of copy-pasting the content of each file into a OmniFoc
     - See: [How to use](#how-to-use)
 
 # How to use
-
----
 
 ## Install
 
