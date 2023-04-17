@@ -115,7 +115,7 @@ class DB:
             for row in self.conn.execute("SELECT uuid, title FROM TMArea")
         ]
 
-    def fetch_area(self, area_uuid):
+    def fetch_area(self, area_uuid, ignore_logbook=False):
         def fetch_title():
             row = self.conn.execute(
                 "SELECT title FROM TMArea WHERE uuid = ?", (area_uuid,)
@@ -144,9 +144,13 @@ class DB:
                     SQL_AREA_FETCH_PROJECT_IDS, (area_uuid,)
                 )
             ]
-            return [
-                self.fetch_project(project_id) for project_id in project_ids
+            projects = [
+                self.fetch_project(project_id, ignore_logbook)
+                for project_id in project_ids
             ]
+            if ignore_logbook:
+                projects = [p for p in projects if p.status == Status.ACTIVE]
+            return projects
 
         def fetch_tasks():
             task_ids = [
@@ -155,7 +159,10 @@ class DB:
                     SQL_AREA_FETCH_TASK_IDS, (area_uuid,)
                 )
             ]
-            return [self.fetch_task(task_id) for task_id in task_ids]
+            tasks = [self.fetch_task(task_id) for task_id in task_ids]
+            if ignore_logbook:
+                tasks = [t for t in tasks if t.status == Status.ACTIVE]
+            return tasks
 
         return Area(
             fetch_title(),
@@ -168,7 +175,7 @@ class DB:
         def fetch_tags():
             tags = []
             for tag_row in self.conn.execute(
-                SQL_TASK_OR_PROJECT_FETCH_TAGS, (task_id,)
+                    SQL_TASK_OR_PROJECT_FETCH_TAGS, (task_id,)
             ):
                 tag = Tag(tag_row[0])
                 if parent_tag := tag_row[1]:
@@ -216,11 +223,11 @@ class DB:
             ),
         )
 
-    def fetch_project(self, project_id):
+    def fetch_project(self, project_id, ignore_logbook):
         def fetch_tags():
             tags = []
             for tag_row in self.conn.execute(
-                SQL_TASK_OR_PROJECT_FETCH_TAGS, (project_id,)
+                    SQL_TASK_OR_PROJECT_FETCH_TAGS, (project_id,)
             ):
                 tag = Tag(tag_row[0])
                 if parent_tag := tag_row[1]:
@@ -239,7 +246,10 @@ class DB:
                     SQL_PROJECT_FETCH_TASK_IDS, (project_id,)
                 )
             ]
-            return [self.fetch_task(task_id) for task_id in task_ids]
+            tasks = [self.fetch_task(task_id) for task_id in task_ids]
+            if ignore_logbook:
+                tasks = [t for t in tasks if t.status == Status.ACTIVE]
+            return tasks
 
         def fetch_headings():
             heading_ids = [
@@ -249,7 +259,8 @@ class DB:
                 )
             ]
             return [
-                self.fetch_heading(heading_id) for heading_id in heading_ids
+                self.fetch_heading(heading_id, ignore_logbook)
+                for heading_id in heading_ids
             ]
 
         row = self.conn.execute(
@@ -281,7 +292,7 @@ class DB:
             ),
         )
 
-    def fetch_heading(self, heading_id):
+    def fetch_heading(self, heading_id, ignore_logbook):
         def fetch_tasks():
             task_ids = [
                 row[0]
@@ -289,7 +300,10 @@ class DB:
                     SQL_HEADING_FETCH_TASK_IDS, (heading_id,)
                 )
             ]
-            return [self.fetch_task(task_id) for task_id in task_ids]
+            tasks = [self.fetch_task(task_id) for task_id in task_ids]
+            if ignore_logbook:
+                tasks = [t for t in tasks if t.status == Status.ACTIVE]
+            return tasks
 
         row = self.conn.execute(
             SQL_FETCH_PROJECT_OR_HEADING_OR_TASK, (heading_id,)
