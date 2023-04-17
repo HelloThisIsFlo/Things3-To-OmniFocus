@@ -4,10 +4,6 @@ from dataclasses import replace
 
 from src.things3.hierarchy import *
 
-# Note: Converting areas is not supported. Instead, convert projects and generate 1 file per area
-
-INDENT = "    "
-
 DEFER_TIME = "08:00"
 DUE_TIME = "17:00"
 SOMEDAY_TAG = "SOMEDAY"
@@ -16,6 +12,8 @@ MANUALLY_CONVERT_TAGS = {
     "REPEATING": "MANUALLY_CONVERT__REPEATING",
     "SINGLE-ACTIONS": "MANUALLY_CONVERT__SINGLE-ACTIONS",
 }
+
+INDENT = "    "
 
 
 def newline(indent=0):
