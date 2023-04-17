@@ -40,13 +40,15 @@ class TestConvertTask:
         task = Task(TASK_TITLE,
                     "- The note\n"
                     "- Second line of the note\n"
-                    "- Third line of the note")
+                    "    - With some spaces before\n"
+                    "Only escape if the '-' is at the start of the line")
         assert convert_task(task) == dedent(
             """\
             - The Task @parallel(true) @autodone(false)
                 – The note
                 – Second line of the note
-                – Third line of the note
+                    – With some spaces before
+                Only escape if the '-' is at the start of the line
             """
         )
 
@@ -54,13 +56,13 @@ class TestConvertTask:
         task = Task(TASK_TITLE,
                     "This line ends in with a column note:\n"
                     "- It is problematic because:\n"
-                    "  - OmniFocus would believe this describes a project")
+                    "    - OmniFocus would believe this describes a project")
         assert convert_task(task) == dedent(
             """\
             - The Task @parallel(true) @autodone(false)
                 This line ends in with a column note: 
                 – It is problematic because: 
-                  – OmniFocus would believe this describes a project
+                    – OmniFocus would believe this describes a project
             """
         )
 

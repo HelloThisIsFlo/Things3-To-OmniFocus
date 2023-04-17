@@ -53,7 +53,7 @@ def convert_task(task: Task, indent=0) -> str:
 
     def format_note() -> str:
         def escape_dash_with_emdash(note: str) -> str:
-            return note.replace("-", "–")
+            return re.sub(r"^(\s*)-", r"\1–", note, flags=re.MULTILINE)
 
         def escape_end_of_line_column(note: str) -> str:
             return re.sub(r":$", ": ", note, flags=re.MULTILINE)
