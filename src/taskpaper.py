@@ -1,11 +1,12 @@
 # To avoid confusion I will refer to TaskPaper 'tags' as 'attributes'.
 # Whenever I actually use the word 'tag' it will refer to a Things 3 tag.
 from dataclasses import replace
+from datetime import time
 
 from src.things3.hierarchy import *
 
-DEFER_TIME = "08:00"
-DUE_TIME = "17:00"
+DEFER_TIME = time(8)
+DUE_TIME = time(17)
 SOMEDAY_TAG = "SOMEDAY"
 MANUALLY_CONVERT_TAGS = {
     "SOMEDAY_PROJECT": "MANUALLY_CONVERT__SOMEDAY_PROJECT",
@@ -39,10 +40,6 @@ def format_subtasks(subtasks: list[Task], tags: list[Tag], indent=0) -> str:
     )
 
 
-def escape_dashes(note: str) -> str:
-    return note.replace("-", "–")
-
-
 def convert_task(task: Task, indent=0) -> str:
     # NOTE: No need to add the '@context' attribute, it is added automatically by OmniFocus.
     #       Not adding it removes a lot of complexity as its value depends on the tags of the parent project.
@@ -50,15 +47,20 @@ def convert_task(task: Task, indent=0) -> str:
     def append_attribute(attribute: str, value: str) -> None:
         header.append(f"@{attribute}({value})")
 
-    def format_date(date, time):
-        return f"{date.isoformat()} {time}"
+    def format_datetime(to_format: datetime) -> str:
+        return to_format.strftime("%Y-%m-%d %H:%M:%S")
 
     def format_note() -> str:
+        def escape_dash_with_emdash(note: str) -> str:
+            return note.replace("-", "–")
+
         if not task.note:
             return ""
+
+        note = escape_dash_with_emdash(task.note)
         return (
                 newline(indent)
-                + task.note.replace("\n", newline(indent)).replace("-", "–")
+                + note.replace("\n", newline(indent))
                 + newline(0)
         )
 
@@ -72,9 +74,15 @@ def convert_task(task: Task, indent=0) -> str:
     append_attribute("autodone", "false")
 
     if task.defer_date:
-        append_attribute("defer", format_date(task.defer_date, DEFER_TIME))
+        append_attribute(
+            "defer",
+            format_datetime(datetime.combine(task.defer_date, DEFER_TIME))
+        )
     if task.due_date:
-        append_attribute("due", format_date(task.due_date, DUE_TIME))
+        append_attribute(
+            "due",
+            format_datetime(datetime.combine(task.due_date, DUE_TIME))
+        )
 
     tags = task.tags.copy()
     if task.someday:
@@ -85,9 +93,12 @@ def convert_task(task: Task, indent=0) -> str:
         append_attribute("tags", convert_tags(tags))
 
     if task.status == Status.COMPLETED:
-        append_attribute("done", task.completion_datetime.isoformat())
+        append_attribute(
+            "done",
+            task.completion_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        )
     if task.status == Status.DROPPED:
-        append_attribute("dropped", task.completion_datetime.isoformat())
+        append_attribute("dropped", format_datetime(task.completion_datetime))
 
     return "- " + " ".join(header) + format_note() + format_checklist()
 

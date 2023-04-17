@@ -68,13 +68,13 @@ class TestConvertTask:
         task = Task(TASK_TITLE, status=Status.COMPLETED,
                     completion_datetime=datetime(2023, 5, 10, 12, 0, 0))
         assert convert_task(
-            task) == "- The Task @parallel(true) @autodone(false) @done(2023-05-10T12:00:00)"
+            task) == "- The Task @parallel(true) @autodone(false) @done(2023-05-10 12:00:00)"
 
     def test_dropped_task(self):
         task = Task(TASK_TITLE, status=Status.DROPPED,
                     completion_datetime=datetime(2023, 5, 10, 5, 45, 30))
         assert convert_task(
-            task) == "- The Task @parallel(true) @autodone(false) @dropped(2023-05-10T05:45:30)"
+            task) == "- The Task @parallel(true) @autodone(false) @dropped(2023-05-10 05:45:30)"
 
     def test_with_checklist__tags_are_inherited(self):
         task = Task(
@@ -145,7 +145,7 @@ class TestConvertProject:
         project = Project("The Project", status=Status.COMPLETED,
                           completion_datetime=datetime(2023, 5, 10, 12, 0, 0))
         assert convert_project(
-            project) == "- The Project @parallel(true) @autodone(false) @done(2023-05-10T12:00:00)"
+            project) == "- The Project @parallel(true) @autodone(false) @done(2023-05-10 12:00:00)"
 
     def test_project_with_most_attributes_and_note_but_no_task(self):
         project = Project(
