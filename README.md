@@ -54,28 +54,39 @@ Note: `--dbpath` supports globbing (e.g. `~/**/main-*.sqlite`)
 3. Set the repeating schedule for each task/project
 4. Delete the `MANUALLY_CONVERT__REPEATING` tag
 
+> **Why?**  
+> The repeating schedule is stored in a complex format in the Things3 DB. I probably _could_ have spent time deciphering
+> it ... but then I realized I really didn't have that many repeating tasks, so I just decided to do it manually.
+
 #### Someday projects
 
 1. Identify the someday projects by looking at the `MANUALLY_CONVERT__SOMEDAY` tag
 2. Set the status of each someday project to `On Hold`
 3. Delete the `MANUALLY_CONVERT__SOMEDAY` tag
 
+> **Why?**  
+> Can't set a project to `On Hold` via TaskPaper _(or couldn't figure out how to do it)_
+
 #### Someday tasks
 
 1. Set the tag `SOMEDAY` to `On Hold`
 2. _Optional:_ Rename the `SOMEDAY` tag
 
+> **Why?**  
+> Need to let OmniFocus know the `SOMEDAY` tag represents tasks that are on hold
+
 #### Tasks in Areas without a project
-
-The tasks that were in an Area without a project will be in a project named `[AREA_NAME]`
-(where `AREA_NAME` is the name of the area).
-This is because OmniFocus does not allow tasks to live in a folder.
-
-These projects are no real project, but are instead Single-Action lists.
-Setting a project to be a Single-Action list is not possible via TaskPaper
-(or at least I couldn't figure out how to do it), so these need to be set manually
 
 1. Identify the projects by looking at the `MANUALLY_CONVERT__SINGLE-ACTIONS` tag
 2. Convert each project to a Single-Action list
 3. Delete the `MANUALLY_CONVERT__SINGLE-ACTIONS` tag
+
+> **Why?**  
+> The tasks that were in an Area without a project will be in a project named `[AREA_NAME]`
+> (where `AREA_NAME` is the name of the area).
+> This is because OmniFocus does not allow tasks to live in a folder.
+>
+> These projects are no real project, but are instead Single-Action lists.
+> Setting a project to be a Single-Action list is not possible via TaskPaper
+> _(or couldn't figure out how to do it)_, so we have to do it manually.
 
