@@ -17,6 +17,7 @@
 
 		- Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent) @due(2023-06-14 00:00)
 		- Task w/ Subtask in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent : Task Tag Child)
+		    - Task w/ Subtask in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent : Task Tag Child)
 		- Task w/ EVERYTHING in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent) @tags(Project Tag Parent, Task Tag Parent : Task Tag Child) @due(2023-05-10 00:00) @defer(2023-04-19 00:00)
 			Some note
 
@@ -57,3 +58,38 @@
 
 	- Checklist item 1 @parallel(true) @autodone(false) @context(tag1) @tags(tag1)
 	- Checklist item 2 @parallel(true) @autodone(false) @context(tag1) @tags(tag1)
+
+
+
+- Project Outside The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+	- Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+	- Task w/ Subtask in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+		- subtask 1 @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+		- subtask 2 @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+		- subtask 3 @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child)
+	- Defered Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child) @defer(2024-01-01 00:00)
+	- Someday Task in Project In The Area @parallel(true) @autodone(false) @context(Project Tag Parent : Project Tag Child) @tags(Project Tag Parent : Project Tag Child, SOMEDAY)
+
+
+- The Project @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag)
+	- Root Task @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+		- Checklist item 1 @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+		- Checklist item 2 @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+	- Heading 1 @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag)
+		- Task 1 - Basic @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag)
+		- Task 2 - With Tags @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+
+- The Project @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag)
+	- Root Task @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+		The note
+
+		- Checklist item 1 @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+		- Checklist item 2 @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+	- Heading 1 @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag)
+		- Task 1 - Basic @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag)
+		- Task 2 - With Tags @parallel(true) @autodone(false) @context(project_tag) @tags(project_tag, tag1, TEMP)
+
+
+- [The Area] @parallel(true) @autodone(false)
+	- action 1 @parallel(true) @autodone(false)
+	- action 2 @parallel(true) @autodone(false)
